@@ -13,6 +13,8 @@ const CLOUD_NAME = "dxcsttg6u";
 export default function Page() {
   const [photos, setPhotos] = useState([]);
   const [search, setSearch] = useState("");
+  const [tag, setTag] = useState("");
+  const [location, setLocation] = useState("");
 
   useEffect(() => {
     fetchPhotos();
@@ -29,9 +31,6 @@ export default function Page() {
 
   const upload = async (e) => {
     const files = Array.from(e.target.files);
-
-    const tag = prompt("Tag za sve slike:");
-    const location = prompt("Lokacija:");
 
     for (const file of files) {
       const formData = new FormData();
@@ -63,30 +62,49 @@ export default function Page() {
   );
 
   return (
-    <main style={{ padding: 20 }}>
-      <h1>Adriavisions</h1>
+    <main style={{ padding: 20, maxWidth: 1200, margin: "auto" }}>
+      <h1 style={{ fontSize: 32, marginBottom: 20 }}>Adriavisions</h1>
 
+      {/* SEARCH */}
       <input
-        placeholder="Pretraži (tag, lokacija...)"
+        placeholder="Pretraži..."
+        value={search}
         onChange={(e) => setSearch(e.target.value)}
-        style={{ marginBottom: 20, padding: 10, width: "100%" }}
+        style={{ padding: 10, width: "100%", marginBottom: 20 }}
       />
 
-      <input type="file" multiple onChange={upload} />
+      {/* UPLOAD FORM */}
+      <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+        <input
+          placeholder="Tagovi"
+          value={tag}
+          onChange={(e) => setTag(e.target.value)}
+        />
+        <input
+          placeholder="Lokacija"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+        />
+        <input type="file" multiple onChange={upload} />
+      </div>
 
+      {/* GALLERY */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(4,1fr)",
-          gap: 10,
-          marginTop: 20,
+          gridTemplateColumns: "repeat(auto-fill, minmax(200px,1fr))",
+          gap: 15,
         }}
       >
         {filtered.map((p) => (
           <img
             key={p.id}
             src={p.image_url}
-            style={{ width: "100%", borderRadius: 10 }}
+            style={{
+              width: "100%",
+              borderRadius: 12,
+              cursor: "pointer",
+            }}
           />
         ))}
       </div>
