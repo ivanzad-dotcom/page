@@ -5,8 +5,10 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   "https://bsdhxgkcjkjpqaxwelqp.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJzZGh4Z2tjamtqcHFheHdlbHFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0NjM1OTMsImV4cCI6MjA5MDAzOTU5M30.WRAK89d9YAA3B_sw4JpDU8Xk-G0bb-DpPZNSn2FB1Z8"
 );
+
+const CLOUD_NAME = "dxcsttg6u";
 
 export default function Page() {
   const [photos, setPhotos] = useState([]);
@@ -17,13 +19,18 @@ export default function Page() {
   }, []);
 
   const fetchPhotos = async () => {
-    const { data } = await supabase.from("photos").select("*");
+    const { data } = await supabase
+      .from("photos")
+      .select("*")
+      .order("created_at", { ascending: false });
+
     setPhotos(data || []);
   };
 
   const upload = async (e) => {
     const files = Array.from(e.target.files);
-    const tag = prompt("Tag:");
+
+    const tag = prompt("Tag za sve slike:");
     const location = prompt("Lokacija:");
 
     for (const file of files) {
@@ -32,9 +39,10 @@ export default function Page() {
       formData.append("upload_preset", "ml_default");
 
       const res = await fetch(
-        "https://api.cloudinary.com/v1_1/dxcsttg6u/upload",
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`,
         { method: "POST", body: formData }
       );
+
       const data = await res.json();
 
       await supabase.from("photos").insert({
@@ -49,7 +57,9 @@ export default function Page() {
   };
 
   const filtered = photos.filter((p) =>
-    (p.name || "").toLowerCase().includes(search.toLowerCase())
+    (p.name || "").toLowerCase().includes(search.toLowerCase()) ||
+    (p.tags || "").toLowerCase().includes(search.toLowerCase()) ||
+    (p.location || "").toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -57,15 +67,27 @@ export default function Page() {
       <h1>Adriavisions</h1>
 
       <input
-        placeholder="Search..."
+        placeholder="Pretraži (tag, lokacija...)"
         onChange={(e) => setSearch(e.target.value)}
+        style={{ marginBottom: 20, padding: 10, width: "100%" }}
       />
 
       <input type="file" multiple onChange={upload} />
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4,1fr)",
+          gap: 10,
+          marginTop: 20,
+        }}
+      >
         {filtered.map((p) => (
-          <img key={p.id} src={p.image_url} style={{ width: "100%" }} />
+          <img
+            key={p.id}
+            src={p.image_url}
+            style={{ width: "100%", borderRadius: 10 }}
+          />
         ))}
       </div>
     </main>
