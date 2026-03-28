@@ -12,7 +12,7 @@ const CLOUD_NAME = "dxcsttg6u";
 
 export default function Page() {
   const [photos, setPhotos] = useState([]);
-  const [search, setSearch] = useState("");
+  const [showUpload, setShowUpload] = useState(false);
   const [tag, setTag] = useState("");
   const [location, setLocation] = useState("");
 
@@ -53,108 +53,83 @@ export default function Page() {
     }
 
     fetchPhotos();
+    setShowUpload(false);
   };
 
-  const filtered = photos.filter((p) =>
-    (p.name || "").toLowerCase().includes(search.toLowerCase()) ||
-    (p.tags || "").toLowerCase().includes(search.toLowerCase()) ||
-    (p.location || "").toLowerCase().includes(search.toLowerCase())
-  );
-
   return (
-    <main
-      style={{
-        background: "#0b0b0b",
-        color: "white",
-        minHeight: "100vh",
-        padding: "40px 20px",
-        fontFamily: "system-ui",
-      }}
-    >
-      <div style={{ maxWidth: 1200, margin: "auto" }}>
-        {/* HEADER */}
-        <h1 style={{ fontSize: 40, marginBottom: 10 }}>
-          Adriavisions
-        </h1>
-        <p style={{ opacity: 0.6, marginBottom: 30 }}>
-          Photography portfolio
-        </p>
-
-        {/* SEARCH */}
-        <input
-          placeholder="Search photos..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            width: "100%",
-            padding: 14,
-            borderRadius: 12,
-            border: "none",
-            marginBottom: 20,
-            background: "#1a1a1a",
-            color: "white",
-          }}
-        />
-
-        {/* UPLOAD */}
-        <div
-          style={{
-            display: "flex",
-            gap: 10,
-            marginBottom: 30,
-            flexWrap: "wrap",
-          }}
-        >
-          <input
-            placeholder="Tags"
-            value={tag}
-            onChange={(e) => setTag(e.target.value)}
-            style={{ padding: 10, borderRadius: 10 }}
-          />
-          <input
-            placeholder="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            style={{ padding: 10, borderRadius: 10 }}
-          />
-          <input type="file" multiple onChange={upload} />
-        </div>
-
-        {/* GALLERY */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(250px,1fr))",
-            gap: 20,
-          }}
-        >
-          {filtered.map((p) => (
-            <div
-              key={p.id}
-              style={{
-                overflow: "hidden",
-                borderRadius: 16,
-              }}
-            >
-              <img
-                src={p.image_url}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  transition: "0.3s",
-                }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.05)")
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
-              />
-            </div>
-          ))}
-        </div>
+    <main style={{ background: "#000", minHeight: "100vh" }}>
+      {/* HEADER */}
+      <div style={{ padding: 20, color: "white", fontSize: 24 }}>
+        Adriavisions
       </div>
+
+      {/* GALLERY */}
+      <div
+        style={{
+          columnCount: 4,
+          columnGap: "10px",
+          padding: 10,
+        }}
+      >
+        {photos.map((p) => (
+          <img
+            key={p.id}
+            src={p.image_url}
+            style={{
+              width: "100%",
+              marginBottom: 10,
+              borderRadius: 10,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* FLOAT BUTTON */}
+      <button
+        onClick={() => setShowUpload(true)}
+        style={{
+          position: "fixed",
+          bottom: 20,
+          right: 20,
+          width: 60,
+          height: 60,
+          borderRadius: "50%",
+          fontSize: 30,
+          background: "white",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        +
+      </button>
+
+      {/* UPLOAD MODAL */}
+      {showUpload && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ background: "white", padding: 20, borderRadius: 10 }}>
+            <h3>Upload</h3>
+            <input
+              placeholder="Tag"
+              onChange={(e) => setTag(e.target.value)}
+            />
+            <input
+              placeholder="Location"
+              onChange={(e) => setLocation(e.target.value)}
+            />
+            <input type="file" multiple onChange={upload} />
+            <button onClick={() => setShowUpload(false)}>Close</button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
