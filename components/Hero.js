@@ -29,3 +29,17 @@ export default function Hero({ photos }) {
     </div>
   );
 }
+<div style={{
+  position: "relative"
+}}>
+  <img ... />
+
+  <div style={{
+    position: "absolute",
+    bottom: 20,
+    left: 20
+  }}>
+    <h1>Adriavisions</h1>
+    <p>Photography archive & portfolio</p>
+  </div>
+</div>
