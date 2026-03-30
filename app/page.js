@@ -1,6 +1,9 @@
 
 "use client";
 
+import HeroCollage from "../components/HeroCollage";
+import TagCloud from "../components/TagCloud";
+import Locations from "../components/Locations";
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Gallery from "../components/Gallery";
@@ -27,7 +30,11 @@ export default function Page() {
   return (
     <main style={{ background: "#000", minHeight: "100vh" }}>
       <Header />
+<HeroCollage photos={photos.slice(0, 20)} />
 
+<TagCloud photos={photos} />
+
+<Locations photos={photos} />
       <Gallery photos={photos} />
 
       <button
